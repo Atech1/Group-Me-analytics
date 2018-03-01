@@ -1,0 +1,3 @@
+[submodule "pysettings"]
+	path = pysettings
+	url = https://github.com/UmSenhorQualquer/pysettings
