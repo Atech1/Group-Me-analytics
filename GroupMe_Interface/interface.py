@@ -50,7 +50,7 @@ class Group(object):
         if self.type is not "chats":
             mmbers = []
             for mem in members:
-                mmbers.append(re.match(r"[^b']([^']*)[^']", mem['nickname'].encode('utf-8')).group())
+                mmbers.append(re.match(r"[^b']([^']*)[^']", mem['nickname']).group())
             return mmbers
         else:
             return [re.match(r"[^b']([^']*)[^']", mem).group() for mem in members]

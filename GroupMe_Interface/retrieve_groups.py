@@ -1,14 +1,13 @@
 # Alexander Ross (asr3bj), retrieve_groups.py
 # this was created Mar, 2018
 
-import json
-import requests
-import datetime
-import re
-import settings
-import time
 import csv
-from interface import Group
+
+import requests
+from GroupMe_Interface.interface import Group
+from tqdm import *
+
+import settings
 
 URL = settings.URL
 Token = settings.Token
@@ -26,11 +25,11 @@ def request(chat, param = None):
 
 def get_groups():
     """finds all groups"""
+    print("\n chats")
     groups = []
     groupes = get_response(request('groups', {'per_page' : 100}))
     if groupes is not None:
-        for group in groupes:
-            print("ran group")
+        for group in tqdm(groupes):
             groups.append(Group(group["group_id"], group["name"], group["members"],
                                 count = group['messages']['count'], last_id = group['messages']['last_message_id']))
         return groups
@@ -38,11 +37,11 @@ def get_groups():
         raise NotImplementedError
 
 def groups_DM():
+    print(" \n DM's")
     groups = []
     groupes = get_response(request('chats', {'per_page': 100}))
     if groupes is not None:
-        for group in groupes:
-            print("running group")
+        for group in tqdm(groupes):
             groups.append(Group(group['other_user']['id'], group['other_user']['name'],
                                 [group['other_user']['name']],
                                 'chats', group['messages_count'], last_id = group['last_message']['id']))
@@ -65,5 +64,3 @@ def csv_write(file_name, groups = None): # remember to actually fix the issue wi
         for msg in group.messages:
             wr.writerow([msg.user, msg.text, msg.favorites, msg.created])
         print('finished group')
-
-csv_write("data_file.csv", retrieve_all())
