@@ -2,29 +2,29 @@
 # this was created Mar, 2018
 
 import GroupMe_Interface.retrieve_groups as retrieve_groups
-from textblob import TextBlob
 from tqdm import tqdm
-from sentiment.stats import stat_object, run
-from sentiment.Analyser_Base import AnalyserBase
-from sentiment.Analyser_Subclasses import StandardAnalysis, VaderAnalysis
+from sentiment.stat_object import stat_object, run
+from sentiment.Analyser_Subclasses import StandardAnalysis, VaderAnalysis, SplitSentenceAnalysis
 
-def split_into_sentences(text):
-        return TextBlob(text).sentences
 
 def all_sentiments(groups, method):
-    pos_msgs, neg_msgs, stats = [], [], []
+    """pos_msgs, neg_msgs, stats = [], [], [] """
+    stats = []
     for group in tqdm(groups):
         stat = stat_object(group)
         for msg in group.messages:
-            if method.check is None: continue
-            if method.check:
+            check = method.check(msg)
+            if check is None: continue
+            if check:
                 stat.pos_count += 1
                 stat.pos_msgs = msg
-            if not method.check:
+            #    pos_msgs.append(msg)  # remember to delete these and return only stats
+            if not check:
                 stat.neg_count += 1
                 stat.neg_msgs = msg
+             #   neg_msgs.append(msg)  # remember to delete these and return only stats
         stats.append(stat)
-    return pos_msgs, neg_msgs, stats
+    return stats
 
 
 def critical(msgs):
@@ -33,12 +33,13 @@ def critical(msgs):
 
 
 retrieve_groups.retrieve_all()
-p_msgs, n_msgs, stat_l1 = all_sentiments(retrieve_groups.cache_groups,VaderAnalysis())
-p_msgs_t, n_msgs_t, stat_l2 = all_sentiments(retrieve_groups.cache_groups, StandardAnalysis())
+stat_l1 = all_sentiments(retrieve_groups.cache_groups,SplitSentenceAnalysis())
+stat_l2 = all_sentiments(retrieve_groups.cache_groups, StandardAnalysis())
 
 for i in range(len(stat_l1)):
     stat_l2[i].compare(stat_l1[i])
 run()
+
 """
 write(p_msgs, "pos_msgs.txt")
 write(n_msgs, "neg_msgs.txt")

@@ -3,9 +3,7 @@
 
 mst = []
 msn = []
-
-class Stat_Analyser(object):
-    pass
+from sentiment.Stat import Stat
 
 class stat_object(object):
     """holds some stats"""
@@ -81,12 +79,12 @@ class stat_object(object):
             print("messages found: {}  compared to {}".format(self.neg_count + self.pos_count,
                                                               other.neg_count + other.pos_count))
             print("positive messages and %: tot: {}, {}%, compared to {}, {}%".format(self.pos_count,
-                100*round(self.pos_count/found1, 3),other.pos_count, 100*round(other.pos_count/found2, 3)))
+                round(100*self.pos_count/found1, 3),other.pos_count, round(100*other.pos_count/found2, 3)))
             print("negative messages and %: tot: {}, {}% compared to {}, {}%".format(self.neg_count,
                 100*round(self.neg_count/found1, 3),other.neg_count,100*round(other.neg_count/found2, 3)))
             print("loss: {}% compared to {}%".format(
-                100*round((self.total-(self.neg_count + self.pos_count))/self.total, 4),
-                100*round((other.total - (other.neg_count + other.pos_count))/other.total, 3)))
+                round(100*(self.total-(self.neg_count + self.pos_count))/self.total, 3),
+                round(100*(other.total - (other.neg_count + other.pos_count))/other.total, 3)))
             self.compare_msgs(other)
 
     def compare_msgs(self, other):
@@ -97,6 +95,16 @@ class stat_object(object):
         nneg = [ msg.text for msg in self.neg_msgs if msg not in other.neg_msgs]
         mst = mst + [self.name, "pos messages"] + pos + ["neg messages"] + neg
         msn = msn + [self.name, "npos messages"] + npos + ["nneg messages"] + nneg
+        return pos, neg   # I don't know about this
+
+    def stats(self):
+        found = self.pos_count + self.neg_count if self.pos_count + self.neg_count > 0 else 1
+        pos_score_r, pos_score_abs = round(100*self.pos_count / (found), 3),\
+                                     round(100*self.pos_count / self.group.total, 3)
+        neg_score_r, neg_score_abs = round(100*self.neg_count / (found), 3),\
+                                     round(100*self.neg_count / self.group.total, 3)
+        total_percentage = round(100 * (found) / (self.group.total), 4)
+        return Stat(self.total, found, total_percentage, pos_score_r, neg_score_r, pos_score_abs, neg_score_abs, self.members)
 
 def write(lst, file_name):
     with open(file_name, "w", encoding = "utf-8") as f:
