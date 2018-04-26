@@ -12,7 +12,12 @@ class Stat_Analyser(object):
         pass
 
     def effectiveness_rating(self, limit):  # for groups larger than limit, what is the average return
-        pass
+        for stat in self.stat_groups:
+            thing = stat.stats
 
     def representative_msgs(self, sample_size):  # this finds a bunch of representative msgs of sample size
         pass
+
+    def show(self, limit = 400, sample_size = 10):
+        print(self.effectiveness_rating(limit))
+        print(self.representative_msgs(sample_size))

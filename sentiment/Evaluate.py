@@ -4,7 +4,7 @@
 import GroupMe_Interface.retrieve_groups as retrieve_groups
 from tqdm import tqdm
 from sentiment.stat_object import stat_object, run
-from sentiment.Analyser_Subclasses import StandardAnalysis, VaderAnalysis, SplitSentenceAnalysis
+from sentiment.Analyser_Subclasses import StandardAnalysis, VaderAnalysis, SubjectivityAnalysis
 
 
 def all_sentiments(groups, method):
@@ -33,7 +33,7 @@ def critical(msgs):
 
 
 retrieve_groups.retrieve_all()
-stat_l1 = all_sentiments(retrieve_groups.cache_groups,SplitSentenceAnalysis())
+stat_l1 = all_sentiments(retrieve_groups.cache_groups, SubjectivityAnalysis())
 stat_l2 = all_sentiments(retrieve_groups.cache_groups, StandardAnalysis())
 
 for i in range(len(stat_l1)):

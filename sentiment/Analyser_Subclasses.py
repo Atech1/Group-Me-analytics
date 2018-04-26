@@ -15,10 +15,10 @@ class StandardAnalysis(AnalyserBase):
 
     def check(self, msg):
         vs = self.analyse(msg)
-        if vs >= 0.05:
+        if vs >= 0.1:
             if vs > 0:
                 return True
-        if vs <= -0.05:
+        if vs <= -0.1:
             if vs <= 0:
                 return False
         else:
@@ -26,6 +26,7 @@ class StandardAnalysis(AnalyserBase):
 
     def analyse(self, msg):
         return TextBlob(msg.text).sentiment.polarity
+
 
 class VaderAnalysis(AnalyserBase):
     """this is a vader analysis subclass"""
@@ -98,3 +99,26 @@ class SplitSentenceAnalysis(AnalyserBase):
             if vs['pos'] - vs['neg'] <= 0:
                 return vs['neg']
         return vs['neg'] + vs['pos']
+
+
+class SubjectivityAnalysis(AnalyserBase):
+    def __init__(self):
+        pass
+
+    def check(self, msg):
+        vs = self.analyse(msg)
+        if vs.subjectivity < 0.1: return None
+        if vs.polarity >= 0.1:
+            if vs.polarity > 0:
+                return True
+        if vs.polarity <= -0.1:
+            if vs.polarity <= 0:
+                return False
+        else:
+            return None
+
+    def analyse(self, msg):
+        return TextBlob(msg.text).sentiment
+
+
+    # give an example function to give the best example of a message classified by this.

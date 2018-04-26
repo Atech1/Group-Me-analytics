@@ -106,11 +106,13 @@ class stat_object(object):
         total_percentage = round(100 * (found) / (self.group.total), 4)
         return Stat(self.total, found, total_percentage, pos_score_r, neg_score_r, pos_score_abs, neg_score_abs, self.members)
 
+
 def write(lst, file_name):
     with open(file_name, "w", encoding = "utf-8") as f:
         for msg in lst:
             f.write("{}".format(msg) + '\n')
         f.close()
+
 
 def run():
     write(mst, "Union Messages.txt")
